@@ -1,0 +1,87 @@
+# Copyright (C) 2024 Chocante
+# This file is distributed under the GNU General Public License v3.0.
+msgid ""
+msgstr ""
+"Project-Id-Version: Free Shipping Info 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/chocante-free-"
+"shipping\n"
+"POT-Creation-Date: 2025-02-11T11:57:51+00:00\n"
+"PO-Revision-Date: 2025-02-11 12:58+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: pl_PL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.5\n"
+"X-Domain: chocante-free-shipping\n"
+
+#. Plugin Name of the plugin
+#: chocante-free-shipping.php
+msgid "Free Shipping by Location"
+msgstr "Darmowa dostawa"
+
+#. Description of the plugin
+#: chocante-free-shipping.php
+msgid "Calculate free shipping rate based on customer location."
+msgstr "Pokaż informacje o darmowej dostawie na podstawie kraju klienta."
+
+#. Author of the plugin
+#: chocante-free-shipping.php
+msgid "Chocante"
+msgstr ""
+
+#. translators: %s WC download URL link.
+#: chocante-free-shipping.php:57
+msgid ""
+"Free Shipping by Location requires WooCommerce to be installed and active. "
+"You can download %s here."
+msgstr ""
+
+#: class-chocante-free-shipping.php:49
+msgid "Cloning is forbidden."
+msgstr ""
+
+#: class-chocante-free-shipping.php:56
+msgid "Unserializing instances of this class is forbidden."
+msgstr ""
+
+#. translators: No free shipping available.
+#: class-chocante-free-shipping.php:256
+msgid "No free shipping available"
+msgstr "Brak darmowej dostawy"
+
+#. translators: Free shipping info.
+#: class-chocante-free-shipping.php:260
+msgid ""
+"<strong>Free shipping</strong> to <strong>%1$s</strong> for orders starting "
+"from <strong>%2$s</strong>"
+msgstr ""
+"<strong>Darmowa dostawa</strong> przy zamówieniach od <strong>%2$s</strong> "
+"do: <strong>%1$s</strong>"
+
+#. translators: No free shipping to country available.
+#: class-chocante-free-shipping.php:263
+msgid "No free shipping to <strong>%s</strong> available"
+msgstr "Brak darmowej dostawy do: <strong>%s</strong>"
+
+#. translators: The amount left for free shipping.
+#: class-chocante-free-shipping.php:338
+msgid "You only need %s more to get free shipping!"
+msgstr "Do darmowej wysyłki brakuje %s !"
+
+#. translators: Continue shopping.
+#: class-chocante-free-shipping.php:342
+msgid "Continue shopping"
+msgstr "Kontynuuj zakupy"
+
+#: class-chocante-free-shipping.php:371
+msgid "Free shipping calculations"
+msgstr "Próg darmowej wysyłki"
+
+#: class-chocante-free-shipping.php:373
+msgid "Exclude from free shipping"
+msgstr "Nie uwzględniaj podczas obliczania darmowej wysyłki"
+
+#~ msgid "Display free delivery by country."
+#~ msgstr "Pokaż informację o darmowej wysyłce do kraju klienta."
