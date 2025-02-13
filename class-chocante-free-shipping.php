@@ -99,6 +99,9 @@ class Chocante_Free_Shipping {
 		// Display free shipping notice in cart.
 		add_action( 'woocommerce_before_cart', array( $this, 'display_cart_notice' ), 9 );
 
+		// Display free shipping notice in checkout.
+		add_action( 'woocommerce_before_checkout_form', array( $this, 'display_cart_notice' ), 9 );
+
 		// Exclude shipping method from free shipping calculations.
 		add_action( 'woocommerce_init', array( $this, 'exclude_from_free_shipping' ) );
 	}
@@ -327,7 +330,7 @@ class Chocante_Free_Shipping {
 	public function display_cart_notice() {
 		$country                  = $this->get_customer_shipping_country();
 		$free_shipping            = $this->get_free_shipping_from_cache( $country );
-		$cart_total               = WC()->cart->get_subtotal() + WC()->cart->get_subtotal_tax();
+		$cart_total               = WC()->cart->get_subtotal() + ( wc_prices_include_tax() ? WC()->cart->get_subtotal_tax() : 0 );
 		$free_shipping_difference = floatval( $free_shipping ) - $cart_total;
 
 		if ( $free_shipping_difference > 0 ) {
