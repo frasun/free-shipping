@@ -189,8 +189,25 @@ class Chocante_Free_Shipping {
 					if ( is_numeric( $method->instance_settings['method_free_shipping'] ) ) {
 						$free_shipping_amount = $method->instance_settings['method_free_shipping'];
 
+						// WCML.
 						if ( function_exists( 'wcml_is_multi_currency_on' ) && wcml_is_multi_currency_on() ) {
 							$free_shipping_amount = apply_filters( 'wcml_raw_price_amount', $free_shipping_amount );
+						}
+
+						// Curcy.
+						// Curcy free version.
+						if ( class_exists( 'WOOMULTI_CURRENCY_F_Data' ) ) {
+							$currency_setting = WOOMULTI_CURRENCY_F_Data::get_ins();
+						}
+
+						// Curcy premium version.
+						if ( class_exists( 'WOOMULTI_CURRENCY_Data' ) ) {
+							$currency_setting = WOOMULTI_CURRENCY_Data::get_ins();
+						}
+
+						if ( isset( $currency_setting ) ) {
+							$current_currency     = $currency_setting->get_current_currency();
+							$free_shipping_amount = wmc_get_price( $free_shipping_amount, $current_currency, true );
 						}
 
 						break;
@@ -313,7 +330,7 @@ class Chocante_Free_Shipping {
 	 * @return string
 	 */
 	public function display_free_shipping_label( $label, $method ) {
-		$has_free_shipping = 0 === $method->cost;
+		$has_free_shipping = 0 === (int) $method->cost;
 
 		if ( $has_free_shipping ) {
 			$free_shipping_label = '<small class="chocante-free-shipping">' . __( 'Free shipping', 'woocommerce' ) . '</small>';
