@@ -34,6 +34,10 @@ add_action( 'plugins_loaded', 'chocante_free_shipping_init', 10 );
 function chocante_free_shipping_init() {
 	load_plugin_textdomain( 'chocante-free-shipping', false, plugin_basename( __DIR__ ) . '/languages' );
 
+	if ( ! class_exists( 'WooCommerce' ) ) {
+		return;
+	}
+
 	Chocante_Free_Shipping::instance();
 }
 
