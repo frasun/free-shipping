@@ -277,10 +277,10 @@ class Chocante_Free_Shipping {
 		} elseif ( isset( $free_shipping ) ) {
 			$free_shipping_limit = wc_price( $free_shipping );
 			// translators: Free shipping info.
-			$message = sprintf( __( '<strong>Free shipping</strong> to <strong>%1$s</strong> for orders starting from <strong>%2$s</strong>', 'chocante-free-shipping' ), $country_name, $free_shipping_limit );
+			$message = sprintf( __( '<strong>Free shipping</strong> to <strong data-country>%1$s</strong> for orders starting from <strong>%2$s</strong>', 'chocante-free-shipping' ), $country_name, $free_shipping_limit );
 		} else {
 			// translators: No free shipping to country available.
-			$message = sprintf( __( 'No free shipping to <strong>%s</strong> available', 'chocante-free-shipping' ), $country_name );
+			$message = sprintf( __( 'No free shipping to <strong data-country>%s</strong> available', 'chocante-free-shipping' ), $country_name );
 		}
 
 		if ( $return_content ) {
