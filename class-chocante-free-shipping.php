@@ -101,6 +101,8 @@ class Chocante_Free_Shipping {
 
 		// Display free shipping notice in checkout.
 		add_action( 'woocommerce_before_checkout_form', array( $this, 'display_cart_notice' ), 9 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'add_client_checkout_validation' ) );
+		add_filter( 'woocommerce_update_order_review_fragments', array( $this, 'print_free_shipping_notice_fragment' ) );
 
 		// Exclude shipping method from free shipping calculations.
 		add_action( 'woocommerce_init', array( $this, 'exclude_from_free_shipping' ) );
@@ -345,10 +347,20 @@ class Chocante_Free_Shipping {
 	 * Add notice about free shipping in cart
 	 */
 	public function display_cart_notice() {
+		$message = $this->get_free_shipping_notice();
+
+		wc_add_notice( $message, 'notice', array( 'type' => 'chocante-free-shipping' ) );
+	}
+
+	/**
+	 * Get free shipping notice content
+	 */
+	public function get_free_shipping_notice() {
 		$country                  = $this->get_customer_shipping_country();
 		$free_shipping            = $this->get_free_shipping_from_cache( $country );
-		$cart_total               = WC()->cart->get_subtotal() + ( wc_prices_include_tax() ? WC()->cart->get_subtotal_tax() : 0 );
+		$cart_total               = WC()->cart->get_subtotal() + ( ! WC()->customer->is_vat_exempt() ? WC()->cart->get_subtotal_tax() : 0 );
 		$free_shipping_difference = floatval( $free_shipping ) - $cart_total;
+		$message                  = null;
 
 		if ( $free_shipping_difference > 0 ) {
 			$formatted_difference = wc_price( $free_shipping_difference );
@@ -361,9 +373,9 @@ class Chocante_Free_Shipping {
 			// translators: Continue shopping.
 			$message .= __( 'Continue shopping', 'chocante-free-shipping' );
 			$message .= '</a>';
-
-			wc_add_notice( $message, 'notice', array( 'type' => 'chocante-free-shipping' ) );
 		}
+
+		return $message;
 	}
 
 	/**
@@ -396,5 +408,65 @@ class Chocante_Free_Shipping {
 		);
 
 		return array_merge( $fields, $add_fields );
+	}
+
+	/**
+	 * Add form validation to fields in checkout
+	 */
+	public function add_client_checkout_validation() {
+		if ( ! is_checkout() ) {
+			return;
+		}
+
+		if ( 'production' === wp_get_environment_type() ) {
+			$script = 'chocante-free-shipping.min.js';
+		} else {
+			$script = 'chocante-free-shipping.js';
+		}
+
+		wp_enqueue_script(
+			'chocante-free-shipping',
+			plugin_dir_url( __FILE__ ) . "/js/{$script}",
+			array(),
+			'1.0.0',
+			array(
+				'strategy'  => 'defer',
+				'in_footer' => true,
+			)
+		);
+	}
+
+	/**
+	 * Print free shipping notice fragment
+	 *
+	 * @param array $fragments Checkout AJAX fragments.
+	 * @return array
+	 */
+	public function print_free_shipping_notice_fragment( $fragments ) {
+		ob_start();
+		$message = $this->get_free_shipping_notice();
+
+		if ( ! $message ) {
+			ob_end_clean();
+			$fragments['free_shipping_notice'] = null;
+			return $fragments;
+		}
+
+		wc_get_template(
+			'notices/notice.php',
+			array(
+				'notices' => array(
+					array(
+						'notice' => $message,
+						'data'   => array( 'type' => 'chocante-free-shipping' ),
+					),
+				),
+			)
+		);
+
+		$free_shipping_notice_fragment     = wc_kses_notice( ob_get_clean() );
+		$fragments['free_shipping_notice'] = $free_shipping_notice_fragment;
+
+		return $fragments;
 	}
 }
