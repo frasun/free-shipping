@@ -26,7 +26,6 @@ class Chocante_Free_Shipping {
 	protected $version;
 
 	const SHIPPING_ZONE_LOCATIONS = 'woocommerce_shipping_zone_locations';
-	const SHIPPING_COOKIE         = 'chocante_shipping_country';
 	const NONCE                   = 'chocante_free_shipping';
 
 	/**
@@ -76,20 +75,6 @@ class Chocante_Free_Shipping {
 	 * Register hooks
 	 */
 	public function init() {
-		// Set shipping country on page load.
-		add_action( 'wp', array( $this, 'set_shipping_country' ) );
-
-		// Modify shipping calculator.
-		add_filter( 'woocommerce_shipping_calculator_enable_city', '__return_false' );
-		add_filter( 'woocommerce_shipping_calculator_enable_postcode', '__return_false' );
-		add_filter( 'woocommerce_shipping_calculator_enable_state', '__return_false' );
-
-		// Add cache vary for shpping country.
-		if ( has_action( 'litespeed_load_thirdparty' ) ) {
-			require_once plugin_dir_path( __FILE__ ) . 'class-chocante-free-shipping-lscache.php';
-			add_action( 'litespeed_load_thirdparty', 'Chocante_Free_Shipping_LSCache::detect' );
-		}
-
 		// Modify shipping cost when free is available.
 		add_filter( 'woocommerce_package_rates', array( $this, 'handle_free_shipping_methods' ) );
 
@@ -109,40 +94,11 @@ class Chocante_Free_Shipping {
 	}
 
 	/**
-	 * Set cutomer shipping location
-	 */
-	public function set_shipping_country() {
-		if ( ! isset( WC()->customer ) || headers_sent() ) {
-			return;
-		}
-
-		$shipping_country = $this->get_customer_shipping_country();
-		$this->manage_location_cookie( $shipping_country );
-	}
-
-	/**
-	 * Manage setting and unsetting location cookie
-	 *
-	 * @param string $shipping_country Shipping country code.
-	 */
-	private function manage_location_cookie( $shipping_country ) {
-		$default_customer_location = wc_get_customer_default_location();
-		$default_shipping_country  = $default_customer_location['country'];
-
-		if ( $shipping_country !== $default_shipping_country ) {
-			setcookie( self::SHIPPING_COOKIE, $shipping_country, time() + 60 * 60 * 48, '/' );
-		} else {
-			// Hack: set cookie expiration in the past.
-			setcookie( self::SHIPPING_COOKIE, '', time() - 3600, '/' );
-		}
-	}
-
-	/**
 	 * Get shipping location
 	 *
 	 * @return string
 	 */
-	private function get_customer_shipping_country() {
+	private function get_shipping_country() {
 		return WC()->customer->get_shipping_country();
 	}
 
@@ -269,7 +225,7 @@ class Chocante_Free_Shipping {
 	 * @return string
 	 */
 	public function display_free_shipping_info( $return_content = false ) {
-		$country       = $this->get_customer_shipping_country();
+		$country       = $this->get_shipping_country();
 		$country_name  = $this->get_country_name( $country );
 		$free_shipping = $this->get_free_shipping_from_cache( $country );
 
@@ -356,7 +312,7 @@ class Chocante_Free_Shipping {
 	 * Get free shipping notice content
 	 */
 	public function get_free_shipping_notice() {
-		$country                  = $this->get_customer_shipping_country();
+		$country                  = $this->get_shipping_country();
 		$free_shipping            = $this->get_free_shipping_from_cache( $country );
 		$cart_total               = WC()->cart->get_subtotal() + ( ! WC()->customer->is_vat_exempt() ? WC()->cart->get_subtotal_tax() : 0 );
 		$free_shipping_difference = floatval( $free_shipping ) - $cart_total;

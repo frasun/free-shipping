@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Free Shipping by Location
  * Description: Calculate free shipping rate based on customer location.
- * Version: 1.2.0
+ * Version: 1.3.0
  * Author: Chocante
  * Text Domain: chocante-free-shipping
  * Domain Path: /languages
